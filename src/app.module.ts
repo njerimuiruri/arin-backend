@@ -24,6 +24,9 @@ import { ResearchProjectsModule } from './research-projects/research-projects.mo
     UsersModule,
     AuthModule,
     ResearchProjectsModule,
+    
+    
+
   ],
   controllers: [AppController],
   providers: [AppService],
