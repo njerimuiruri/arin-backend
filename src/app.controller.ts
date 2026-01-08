@@ -19,7 +19,6 @@ export class AppController {
   @Get('db-status')
   async getDbStatus() {
     const state = this.connection.readyState;
-    // 1 = connected, 2 = connecting, 0 = disconnected, 3 = disconnecting
     let status = 'disconnected';
     if (state === 1) status = 'connected';
     else if (state === 2) status = 'connecting';
