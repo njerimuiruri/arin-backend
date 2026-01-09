@@ -9,6 +9,9 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ResearchProjectsModule } from './research-projects/research-projects.module';
+import { CapacityBuildingModule } from './capacity-building/capacity-building.module';
+import { PolicyDialoguesModule } from './policy-dialogues/policy-dialogue.module';
+
 
 @Module({
   imports: [
@@ -24,6 +27,8 @@ import { ResearchProjectsModule } from './research-projects/research-projects.mo
     UsersModule,
     AuthModule,
     ResearchProjectsModule,
+    CapacityBuildingModule,
+    PolicyDialoguesModule,
     
   ],
   controllers: [AppController],
