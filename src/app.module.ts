@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { ResearchProjectsModule } from './research-projects/research-projects.module';
 import { CapacityBuildingModule } from './capacity-building/capacity-building.module';
 import { PolicyDialoguesModule } from './policy-dialogues/policy-dialogue.module';
+import { EventsModule } from './events/events.module';
 
 
 @Module({
@@ -29,6 +30,7 @@ import { PolicyDialoguesModule } from './policy-dialogues/policy-dialogue.module
     ResearchProjectsModule,
     CapacityBuildingModule,
     PolicyDialoguesModule,
+    EventsModule,
     
   ],
   controllers: [AppController],

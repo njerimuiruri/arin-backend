@@ -14,7 +14,7 @@ export class PolicyDialoguesService {
       console.log('Attempting to create project with data:', data);
       const created = new this.projectModel(data);
       const saved = await created.save();
-      console.log('Project created successfully:', saved);
+      console.log('Policy Dialogue created successfully:', saved);
       return saved;
     } catch (error) {
       console.error('Error creating project:', error);
@@ -31,19 +31,19 @@ export class PolicyDialoguesService {
 
   async findById(id: string) {
     const project = await this.projectModel.findById(id).exec();
-    if (!project) throw new NotFoundException('Project not found');
+    if (!project) throw new NotFoundException('Policy Dialogue not found');
     return project;
   }
 
   async update(id: string, data: any) {
     const updated = await this.projectModel.findByIdAndUpdate(id, data, { new: true }).exec();
-    if (!updated) throw new NotFoundException('Project not found');
+    if (!updated) throw new NotFoundException('Policy Dialogue not found');
     return updated;
   }
 
   async delete(id: string) {
     const deleted = await this.projectModel.findByIdAndDelete(id).exec();
-    if (!deleted) throw new NotFoundException('Project not found');
+    if (!deleted) throw new NotFoundException('Policy Dialogue not found');
     return deleted;
   }
 }
