@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UploadedFil
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
-import { PolicyDialoguesService } from './policy-dialogues.schema';
+import { PolicyDialoguesService } from './policy-dialogues.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('policy-dialogue')

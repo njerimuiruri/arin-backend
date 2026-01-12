@@ -13,6 +13,8 @@ async function bootstrap() {
       'http://localhost:3000', // Next.js default
       'http://localhost:3001', // If you use a different port
       'http://127.0.0.1:3000',
+      'http://localhost:3003', // Current dashboard port
+      'http://127.0.0.1:3003',
     ],
     credentials: true,
   });
