@@ -12,7 +12,13 @@ import { ResearchProjectsModule } from './research-projects/research-projects.mo
 import { CapacityBuildingModule } from './capacity-building/capacity-building.module';
 import { PolicyDialoguesModule } from './policy-dialogues/policy-dialogue.module';
 import { EventsModule } from './events/events.module';
-
+import { AnnualReportsModule } from './annual-reports/annual-reports.module';
+import { BooksModule } from './books/books.module';
+import { ConferencesModule } from './conferences/conferences.module';
+import { CsrModule } from './csr/csr.module';
+import { JournalArticleModule } from './journal-articles/journal-article.module';
+import { PolicyBriefModule } from './policy-briefs/policy-brief.module';
+import { AnnualReports } from './annual-reports/annual-reports.schema';
 
 @Module({
   imports: [
@@ -31,7 +37,13 @@ import { EventsModule } from './events/events.module';
     CapacityBuildingModule,
     PolicyDialoguesModule,
     EventsModule,
-    
+    AnnualReportsModule,
+    BooksModule,
+    ConferencesModule,
+    CsrModule,
+    JournalArticleModule,
+    PolicyBriefModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],
