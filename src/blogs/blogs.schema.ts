@@ -2,9 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class NewsBrief extends Document {
+export class Blogs extends Document {
   @Prop({ required: true })
   title: string;
+
 
   @Prop({ required: true })
   description: string;
@@ -22,4 +23,4 @@ export class NewsBrief extends Document {
   projectTeam: string[];
 }
 
-export const NewsBriefSchema = SchemaFactory.createForClass(NewsBrief);
+export const BlogsSchema = SchemaFactory.createForClass(Blogs);

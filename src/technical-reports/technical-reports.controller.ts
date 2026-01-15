@@ -2,18 +2,18 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UploadedFil
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
-import { NewsBriefService } from './news-brief.service';
+import { TechnicalReportsService } from './technical-reports.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('news-brief')
-export class NewsBriefController {
-  constructor(private readonly service: NewsBriefService) {}
+@Controller('technical-reports')
+export class TechnicalReportsController {
+  constructor(private readonly service: TechnicalReportsService) {}
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../uploads/news-briefs'));
+        cb(null, path.join(__dirname, '../../uploads/technical-reports'));
       },
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -33,7 +33,7 @@ export class NewsBriefController {
     if (!file) {
       return { error: 'No file uploaded' };
     }
-    const url = `/uploads/news-briefs/${file.filename}`;
+    const url = `/uploads/technical-reports/${file.filename}`;
     return { url };
   }
 

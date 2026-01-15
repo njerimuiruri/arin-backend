@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { NewsBrief } from './news-brief.schema';
+import { Blogs} from './blogs.schema';
 
 @Injectable()
-export class NewsBriefService {
+export class BlogsService {
   constructor(
-    @InjectModel(NewsBrief.name) private projectModel: Model<NewsBrief>,
+    @InjectModel(Blogs.name) private projectModel: Model<Blogs>,
   ) {}
 
   async create(data: any) {

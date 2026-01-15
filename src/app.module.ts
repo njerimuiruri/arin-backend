@@ -18,7 +18,10 @@ import { ConferencesModule } from './conferences/conferences.module';
 import { CsrModule } from './csr/csr.module';
 import { JournalArticleModule } from './journal-articles/journal-article.module';
 import { PolicyBriefModule } from './policy-briefs/policy-brief.module';
-import { AnnualReports } from './annual-reports/annual-reports.schema';
+import { BlogsModule } from './blogs/blogs.module';
+import { TechnicalReportsModule } from './technical-reports/technical-reports.module';
+import { NewsBriefModule } from './news-briefs/news-brief.module';
+
 
 @Module({
   imports: [
@@ -43,6 +46,9 @@ import { AnnualReports } from './annual-reports/annual-reports.schema';
     CsrModule,
     JournalArticleModule,
     PolicyBriefModule,
+    NewsBriefModule,
+    BlogsModule,
+    TechnicalReportsModule,
 
   ],
   controllers: [AppController],
