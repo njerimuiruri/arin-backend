@@ -6,7 +6,6 @@ export class Conferences extends Document {
   @Prop({ required: true })
   title: string;
 
-
   @Prop({ required: true })
   description: string;
 
@@ -19,8 +18,8 @@ export class Conferences extends Document {
   @Prop({ required: true })
   date: Date;
 
-  @Prop({ required: true, type: [String] })
-  projectTeam: string[];
+  // @Prop({ required: true, type: [String] })
+  // projectTeam: string[];
 }
 
 export const ConferencesSchema = SchemaFactory.createForClass(Conferences);

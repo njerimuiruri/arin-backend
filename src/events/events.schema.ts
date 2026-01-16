@@ -19,8 +19,8 @@ export class Event extends Document {
   @Prop({ required: true })
   date: Date;
 
-  @Prop({ required: true, type: [String] })
-  projectTeam: string[];
+  // @Prop({ required: true, type: [String] })
+  // projectTeam: string[];
 }
 
 export const EventsSchema = SchemaFactory.createForClass(Event);
