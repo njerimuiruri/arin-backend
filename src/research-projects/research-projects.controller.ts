@@ -37,6 +37,35 @@ export class ResearchProjectsController {
     return { url };
   }
 
+  // Endpoint for uploading images to be embedded in description
+  @Post('upload-description-image')
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../../uploads/research-projects'));
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, 'desc-' + uniqueSuffix + ext);
+      },
+    }),
+    fileFilter: (req, file, cb) => {
+      if (!file.mimetype.startsWith('image/')) {
+        return cb(new Error('Only image files are allowed!'), false);
+      }
+      cb(null, true);
+    },
+    limits: { fileSize: 5 * 1024 * 1024 },
+  }))
+  async uploadDescriptionImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    const url = `/uploads/research-projects/${file.filename}`;
+    return { url };
+  }
+
   @Post()
   // @UseGuards(JwtAuthGuard) // Temporarily removed for debugging
   async create(@Body() body: any) {

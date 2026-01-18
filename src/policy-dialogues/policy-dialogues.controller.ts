@@ -10,7 +10,7 @@ export class PolicyDialoguesController {
   constructor(private readonly service: PolicyDialoguesService) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', {
+  @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
       destination: (req, file, cb) => {
         cb(null, path.join(__dirname, '../../uploads/policy-dialogues'));
@@ -37,19 +37,47 @@ export class PolicyDialoguesController {
     return { url };
   }
 
+  @Post('upload-resource')
+  @UseInterceptors(FileInterceptor('resource', {
+    storage: diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../../uploads/policy-dialogues'));
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, 'resource-' + uniqueSuffix + ext);
+      },
+    }),
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype !== 'application/pdf') {
+        return cb(new Error('Only PDF files are allowed!'), false);
+      }
+      cb(null, true);
+    },
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  }))
+  async uploadResource(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      return { error: 'No file uploaded' };
+    }
+    const url = `/uploads/policy-dialogues/${file.filename}`;
+    return { url };
+  }
+
   @Post()
   // @UseGuards(JwtAuthGuard) // Temporarily removed for debugging
   async create(@Body() body: any) {
     console.log('Received create request with body:', body);
     
     // Validate required fields
-    if (!body.title || !body.date || !body.category || !body.description) {
-      throw new BadRequestException('Missing required fields: title, date, category, or description');
+    if (!body.title || !body.date || !body.status || !body.description) {
+      throw new BadRequestException('Missing required fields: title, date, status, or description');
     }
 
-    // Ensure projectTeam is an array
-    if (!Array.isArray(body.projectTeam)) {
-      body.projectTeam = [];
+    // Ensure availableResources is an array
+    if (!Array.isArray(body.availableResources)) {
+      body.availableResources = [];
     }
 
     return this.service.create(body);
@@ -57,12 +85,22 @@ export class PolicyDialoguesController {
 
   @Get()
   async findAll() {
-    return this.service.findAll();
+    const results = await this.service.findAll();
+    console.log('Returning dialogues:', results.map(d => ({ _id: d._id, title: d.title })));
+    return results;
   }
 
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return this.service.findById(id);
+    if (!id || id === 'undefined') {
+      throw new BadRequestException('Invalid dialogue ID');
+    }
+    try {
+      return await this.service.findById(id);
+    } catch (error) {
+      console.error('Error fetching dialogue:', error);
+      throw error;
+    }
   }
 
   @Put(':id')

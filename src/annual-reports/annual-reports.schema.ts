@@ -6,7 +6,6 @@ export class AnnualReports extends Document {
   @Prop({ required: true })
   title: string;
 
-
   @Prop({ required: true })
   description: string;
 
@@ -19,8 +18,11 @@ export class AnnualReports extends Document {
   @Prop({ required: true })
   date: Date;
 
-  // @Prop({ required: true, type: [String] })
-  // projectTeam: string[];
+  @Prop({ type: [String], default: [] })
+  availableResources?: string[];
+
+  @Prop({ required: false })
+  year?: string;
 }
 
 export const AnnualReportsSchema = SchemaFactory.createForClass(AnnualReports);

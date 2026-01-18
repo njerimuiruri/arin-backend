@@ -14,12 +14,9 @@ export class AuthController {
 
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('arin_token', {
-      httpOnly: true,
-      secure: false, // Set to false for local development
-      sameSite: 'lax',
-      path: '/', // Add explicit path
-    });
+    console.log('👋 User logged out');
+    // With localStorage, we just clear client-side
+    // No need to set cookies
     return { message: 'Logged out successfully' };
   }
 
@@ -31,20 +28,19 @@ export class AuthController {
     const user = await this.authService.validateUser(body.email, body.password);
     const loginResult = await this.authService.login(user);
     
-    // Set JWT as HTTP-only cookie
-    res.cookie('arin_token', loginResult.access_token, {
-      httpOnly: true,
-      secure: false, // Set to false for local development (localhost uses HTTP not HTTPS)
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 1000, // 1 hour
-      path: '/', // Explicitly set path
-    });
+    console.log('🔐 Login successful for:', user.email);
+    console.log('🎫 Generated access token:', loginResult.access_token.substring(0, 20) + '...');
+    console.log('🔄 Generated refresh token:', loginResult.refresh_token.substring(0, 20) + '...');
+    console.log('💾 Tokens returned in response body (localStorage)');
     
     return { 
       message: 'Login successful',
+      access_token: loginResult.access_token,
+      refresh_token: loginResult.refresh_token,
       user: { 
         email: user.email, 
-        role: user.role 
+        role: user.role,
+        id: user._id
       }
     };
   }
@@ -63,7 +59,33 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async me(@Req() req: AuthenticatedRequest) {
+    console.log('👤 /auth/me called');
+    console.log('🍪 Cookies received:', req.cookies);
+    console.log('👥 User from JWT:', req.user);
     // req.user is set by JwtStrategy
     return req.user;
+  }
+
+  @Post('refresh')
+  async refresh(
+    @Body() body: { refresh_token: string },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = body.refresh_token;
+    
+    if (!refreshToken) {
+      throw new Error('Refresh token not provided');
+    }
+
+    console.log('🔄 Refreshing tokens...');
+    const tokens = await this.authService.refreshTokens(refreshToken);
+    
+    console.log('✅ Tokens refreshed successfully');
+    
+    return { 
+      message: 'Tokens refreshed successfully',
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    };
   }
 }

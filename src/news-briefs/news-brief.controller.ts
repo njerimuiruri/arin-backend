@@ -1,11 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
+import * as fs from 'fs';
 import { NewsBriefService } from './news-brief.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('news-brief')
+function ensureUploadDir(): string {
+  const uploadDir = path.join(__dirname, '../../uploads/news-briefs');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  return uploadDir;
+}
+
+@Controller('news-briefs')
 export class NewsBriefController {
   constructor(private readonly service: NewsBriefService) {}
 
@@ -13,7 +21,7 @@ export class NewsBriefController {
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../uploads/news-briefs'));
+        cb(null, ensureUploadDir());
       },
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -27,7 +35,7 @@ export class NewsBriefController {
       }
       cb(null, true);
     },
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: { fileSize: 5 * 1024 * 1024 },
   }))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -37,19 +45,46 @@ export class NewsBriefController {
     return { url };
   }
 
+  @Post('upload-resource')
+  @UseInterceptors(FileInterceptor('resource', {
+    storage: diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, ensureUploadDir());
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, 'resource-' + uniqueSuffix + ext);
+      },
+    }),
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype !== 'application/pdf') {
+        return cb(new Error('Only PDF files are allowed!'), false);
+      }
+      cb(null, true);
+    },
+    limits: { fileSize: 10 * 1024 * 1024 },
+  }))
+  async uploadResource(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      return { error: 'No file uploaded' };
+    }
+    const url = `/uploads/news-briefs/${file.filename}`;
+    return { url };
+  }
+
   @Post()
-  // @UseGuards(JwtAuthGuard) // Temporarily removed for debugging
   async create(@Body() body: any) {
-    console.log('Received create request with body:', body);
-    
-    // Validate required fields
-    if (!body.title || !body.date || !body.category || !body.description) {
-      throw new BadRequestException('Missing required fields: title, date, category, or description');
+    if (!body.title || !body.description) {
+      throw new BadRequestException('Missing required fields: title or description');
     }
 
-    // Ensure projectTeam is an array
-    if (!Array.isArray(body.projectTeam)) {
-      body.projectTeam = [];
+    if (!Array.isArray(body.availableResources)) {
+      body.availableResources = [];
+    }
+
+    if (!body.year && body.datePosted) {
+      body.year = new Date(body.datePosted).getFullYear();
     }
 
     return this.service.create(body);
@@ -61,17 +96,37 @@ export class NewsBriefController {
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string) {
-    return this.service.findById(id);
+  async findOne(@Param('id') id: string) {
+    const brief = await this.service.findOne(id);
+    if (!brief) {
+      throw new BadRequestException('News brief not found');
+    }
+    return brief;
   }
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() body: any) {
-    return this.service.update(id, body);
+    if (!Array.isArray(body.availableResources)) {
+      body.availableResources = [];
+    }
+
+    if (!body.year && body.datePosted) {
+      body.year = new Date(body.datePosted).getFullYear();
+    }
+
+    const updated = await this.service.update(id, body);
+    if (!updated) {
+      throw new BadRequestException('News brief not found');
+    }
+    return updated;
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.service.delete(id);
+  async remove(@Param('id') id: string) {
+    const deleted = await this.service.remove(id);
+    if (!deleted) {
+      throw new BadRequestException('News brief not found');
+    }
+    return { message: 'News brief deleted successfully' };
   }
 }

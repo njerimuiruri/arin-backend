@@ -2,8 +2,17 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UploadedFil
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
+import * as fs from 'fs';
 import { AnnualReportsService } from './annual-reports.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
+function ensureUploadDir(): string {
+  const uploadDir = path.join(__dirname, '../../uploads/annual-reports');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  return uploadDir;
+}
 
 @Controller('annual-reports')
 export class AnnualReportsController {
@@ -13,7 +22,7 @@ export class AnnualReportsController {
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../uploads/annual-reports'));
+        cb(null, ensureUploadDir());
       },
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -30,6 +39,34 @@ export class AnnualReportsController {
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   }))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      return { error: 'No file uploaded' };
+    }
+    const url = `/uploads/annual-reports/${file.filename}`;
+    return { url };
+  }
+
+  @Post('upload-resource')
+  @UseInterceptors(FileInterceptor('resource', {
+    storage: diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, ensureUploadDir());
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        const ext = path.extname(file.originalname);
+        cb(null, 'resource-' + uniqueSuffix + ext);
+      },
+    }),
+    fileFilter: (req, file, cb) => {
+      if (file.mimetype !== 'application/pdf') {
+        return cb(new Error('Only PDF files are allowed!'), false);
+      }
+      cb(null, true);
+    },
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  }))
+  async uploadResource(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return { error: 'No file uploaded' };
     }

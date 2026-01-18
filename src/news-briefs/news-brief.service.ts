@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { NewsBrief } from './news-brief.schema';
@@ -6,44 +6,31 @@ import { NewsBrief } from './news-brief.schema';
 @Injectable()
 export class NewsBriefService {
   constructor(
-    @InjectModel(NewsBrief.name) private projectModel: Model<NewsBrief>,
+    @InjectModel(NewsBrief.name) private briefModel: Model<NewsBrief>,
   ) {}
 
   async create(data: any) {
     try {
-      console.log('Attempting to create project with data:', data);
-      const created = new this.projectModel(data);
-      const saved = await created.save();
-      console.log('Project created successfully:', saved);
-      return saved;
+      const created = new this.briefModel(data);
+      return await created.save();
     } catch (error) {
-      console.error('Error creating project:', error);
-      if (error.name === 'ValidationError') {
-        throw new BadRequestException(`Validation failed: ${error.message}`);
-      }
       throw error;
     }
   }
 
   async findAll() {
-    return this.projectModel.find().exec();
+    return this.briefModel.find().exec();
   }
 
-  async findById(id: string) {
-    const project = await this.projectModel.findById(id).exec();
-    if (!project) throw new NotFoundException('Project not found');
-    return project;
+  async findOne(id: string) {
+    return this.briefModel.findById(id).exec();
   }
 
   async update(id: string, data: any) {
-    const updated = await this.projectModel.findByIdAndUpdate(id, data, { new: true }).exec();
-    if (!updated) throw new NotFoundException('Project not found');
-    return updated;
+    return this.briefModel.findByIdAndUpdate(id, data, { new: true }).exec();
   }
 
-  async delete(id: string) {
-    const deleted = await this.projectModel.findByIdAndDelete(id).exec();
-    if (!deleted) throw new NotFoundException('Project not found');
-    return deleted;
+  async remove(id: string) {
+    return this.briefModel.findByIdAndDelete(id).exec();
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Newsletters } from './newsletters.schema';
@@ -6,44 +6,36 @@ import { Newsletters } from './newsletters.schema';
 @Injectable()
 export class NewslettersService {
   constructor(
-    @InjectModel(Newsletters.name) private projectModel: Model<Newsletters>,
+    @InjectModel(Newsletters.name) private model: Model<Newsletters>,
   ) {}
 
   async create(data: any) {
     try {
-      console.log('Attempting to create project with data:', data);
-      const created = new this.projectModel(data);
+      const created = new this.model(data);
       const saved = await created.save();
-      console.log('Project created successfully:', saved);
       return saved;
     } catch (error) {
-      console.error('Error creating project:', error);
-      if (error.name === 'ValidationError') {
-        throw new BadRequestException(`Validation failed: ${error.message}`);
-      }
+      console.error('Error creating newsletter:', error);
       throw error;
     }
   }
 
   async findAll() {
-    return this.projectModel.find().exec();
+    return this.model.find().exec();
   }
 
-  async findById(id: string) {
-    const project = await this.projectModel.findById(id).exec();
-    if (!project) throw new NotFoundException('Project not found');
-    return project;
+  async findOne(id: string) {
+    const newsletter = await this.model.findById(id).exec();
+    return newsletter || null;
   }
 
   async update(id: string, data: any) {
-    const updated = await this.projectModel.findByIdAndUpdate(id, data, { new: true }).exec();
-    if (!updated) throw new NotFoundException('Project not found');
-    return updated;
+    const updated = await this.model.findByIdAndUpdate(id, data, { new: true }).exec();
+    return updated || null;
   }
 
-  async delete(id: string) {
-    const deleted = await this.projectModel.findByIdAndDelete(id).exec();
-    if (!deleted) throw new NotFoundException('Project not found');
-    return deleted;
+  async remove(id: string) {
+    const deleted = await this.model.findByIdAndDelete(id).exec();
+    return deleted || null;
   }
 }

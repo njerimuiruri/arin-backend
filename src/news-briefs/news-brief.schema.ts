@@ -12,14 +12,14 @@ export class NewsBrief extends Document {
   @Prop({ required: false })
   image?: string;
 
-  @Prop({ required: true })
-  category: string;
+  @Prop({ required: false })
+  datePosted?: Date;
 
-  @Prop({ required: true })
-  date: Date;
+  @Prop({ type: [String], required: false })
+  availableResources?: string[];
 
-  @Prop({ required: true, type: [String] })
-  projectTeam: string[];
+  @Prop({ required: false })
+  year?: number;
 }
 
 export const NewsBriefSchema = SchemaFactory.createForClass(NewsBrief);

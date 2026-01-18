@@ -2,10 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class csr extends Document {
+export class Csr extends Document {
   @Prop({ required: true })
   title: string;
-
 
   @Prop({ required: true })
   description: string;
@@ -13,14 +12,8 @@ export class csr extends Document {
   @Prop({ required: false })
   image?: string;
 
-  @Prop({ required: true })
-  category: string;
-
-  @Prop({ required: true })
-  date: Date;
-
-  // @Prop({ required: true, type: [String] })
-  // projectTeam: string[];
+  @Prop({ type: [String], required: false })
+  availableResources?: string[];
 }
 
-export const CsrSchema = SchemaFactory.createForClass(csr);
+export const CsrSchema = SchemaFactory.createForClass(Csr);

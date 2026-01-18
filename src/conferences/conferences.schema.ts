@@ -12,14 +12,20 @@ export class Conferences extends Document {
   @Prop({ required: false })
   image?: string;
 
-  @Prop({ required: true })
-  category: string;
+  @Prop({ required: false })
+  venue?: string;
 
   @Prop({ required: true })
   date: Date;
 
-  // @Prop({ required: true, type: [String] })
-  // projectTeam: string[];
+  @Prop({ required: false })
+  category?: string;
+
+  @Prop({ type: [String], required: false })
+  availableResources?: string[];
+
+  @Prop({ required: false })
+  year?: number;
 }
 
 export const ConferencesSchema = SchemaFactory.createForClass(Conferences);

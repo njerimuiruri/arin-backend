@@ -6,12 +6,14 @@ export class ResearchProject extends Document {
   @Prop({ required: true })
   title: string;
 
-
   @Prop({ required: true })
   description: string;
 
   @Prop({ required: false })
-  image?: string;
+  image?: string; // Main project image
+
+  @Prop({ required: false, type: [String] })
+  descriptionImages?: string[]; // Images embedded in description
 
   @Prop({ required: true })
   category: string;

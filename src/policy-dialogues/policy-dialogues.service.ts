@@ -30,9 +30,27 @@ export class PolicyDialoguesService {
   }
 
   async findById(id: string) {
-    const project = await this.projectModel.findById(id).exec();
-    if (!project) throw new NotFoundException('Policy Dialogue not found');
-    return project;
+    console.log('Finding dialogue by ID:', id);
+    if (!id || id === 'undefined') {
+      throw new BadRequestException('Invalid dialogue ID provided');
+    }
+    try {
+      const project = await this.projectModel.findById(id).exec();
+      if (!project) {
+        throw new NotFoundException(`Policy Dialogue with ID ${id} not found`);
+      }
+      console.log('Found dialogue:', project._id);
+      return project;
+    } catch (error: any) {
+      console.error('Error in findById:', error);
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      if (error.kind === 'ObjectId') {
+        throw new BadRequestException(`Invalid dialogue ID format: ${id}`);
+      }
+      throw error;
+    }
   }
 
   async update(id: string, data: any) {
