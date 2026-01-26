@@ -7,22 +7,19 @@ export class ResearchProject extends Document {
   title: string;
 
   @Prop({ required: true })
-  description: string;
-
-  @Prop({ required: false })
-  image?: string; // Main project image
-
-  @Prop({ required: false, type: [String] })
-  descriptionImages?: string[]; // Images embedded in description
+  author: string;
 
   @Prop({ required: true })
-  category: string;
+  description: string; // WYSIWYG HTML or JSON
 
   @Prop({ required: true })
   date: Date;
 
-  @Prop({ required: true, type: [String] })
-  projectTeam: string[];
+  @Prop({ required: false })
+  coverImage?: string; // URL to cover image
+
+  @Prop({ required: false, type: [String] })
+  resources?: string[]; // URLs to uploaded PDFs
 }
 
 export const ResearchProjectSchema = SchemaFactory.createForClass(ResearchProject);

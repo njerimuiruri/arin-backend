@@ -6,23 +6,20 @@ export class JournalArticle extends Document {
   @Prop({ required: true })
   title: string;
 
-  @Prop({ required: true })
-  description: string;
-
-  @Prop({ required: false })
-  image?: string;
-
   @Prop({ required: true, type: [String] })
   authors: string[];
 
-  @Prop({ required: false })
-  datePosted?: Date;
+  @Prop({ required: true })
+  description: string; // WYSIWYG HTML or JSON
 
-  @Prop({ type: [String], required: false })
-  availableResources?: string[];
+  @Prop({ required: true })
+  date: Date;
 
   @Prop({ required: false })
-  year?: number;
+  coverImage?: string; // URL to cover image
+
+  @Prop({ required: false, type: [String] })
+  resources?: string[]; // URLs to uploaded PDFs
 }
 
 export const JournalArticleSchema = SchemaFactory.createForClass(JournalArticle);

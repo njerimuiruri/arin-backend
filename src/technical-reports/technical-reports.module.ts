@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TechnicalReports, TechnicalReportsSchema } from './technical-reports.schema';
 import { TechnicalReportsService } from './technical-reports.service';
 import { TechnicalReportsController } from './technical-reports.controller';
+import { CloudinaryService } from '../common/services/cloudinary.service';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { TechnicalReportsController } from './technical-reports.controller';
     ]),
   ],
   controllers: [TechnicalReportsController],
-  providers: [TechnicalReportsService],
+  providers: [TechnicalReportsService, CloudinaryService],
 })
 export class TechnicalReportsModule {}

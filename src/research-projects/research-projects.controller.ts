@@ -10,11 +10,12 @@ export class ResearchProjectsController {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+  // Upload cover image
+  @Post('upload-cover-image')
+  @UseInterceptors(FileInterceptor('coverImage'))
+  async uploadCoverImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      return { error: 'No file uploaded' };
+      throw new BadRequestException('No file uploaded');
     }
     if (!file.mimetype.startsWith('image/')) {
       throw new BadRequestException('Only image files are allowed!');
@@ -23,6 +24,23 @@ export class ResearchProjectsController {
       throw new BadRequestException('Image size must be less than 5MB');
     }
     const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
+    return { url };
+  }
+
+  // Upload PDF resource(s)
+  @Post('upload-resource')
+  @UseInterceptors(FileInterceptor('resource'))
+  async uploadResource(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    if (file.mimetype !== 'application/pdf') {
+      throw new BadRequestException('Only PDF files are allowed!');
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      throw new BadRequestException('PDF size must be less than 20MB');
+    }
+    const url = await this.cloudinaryService.uploadPdf(file.buffer, file.originalname);
     return { url };
   }
 
@@ -44,21 +62,18 @@ export class ResearchProjectsController {
   }
 
   @Post()
-  // @UseGuards(JwtAuthGuard) // Temporarily removed for debugging
   async create(@Body() body: any) {
-    console.log('Received create request with body:', body);
-    
-    // Validate required fields
-    if (!body.title || !body.date || !body.category || !body.description) {
-      throw new BadRequestException('Missing required fields: title, date, category, or description');
+    if (!body.title || !body.author || !body.date || !body.description) {
+      throw new BadRequestException('Missing required fields: title, author, date, or description');
     }
-
-    // Ensure projectTeam is an array
-    if (!Array.isArray(body.projectTeam)) {
-      body.projectTeam = [];
-    }
-
-    return this.service.create(body);
+    return this.service.create({
+      title: body.title,
+      author: body.author,
+      description: body.description,
+      date: body.date,
+      coverImage: body.coverImage,
+      resources: body.resources,
+    });
   }
 
   @Get()
@@ -73,7 +88,14 @@ export class ResearchProjectsController {
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() body: any) {
-    return this.service.update(id, body);
+    const updateData: any = {};
+    if (body.title !== undefined) updateData.title = body.title;
+    if (body.author !== undefined) updateData.author = body.author;
+    if (body.description !== undefined) updateData.description = body.description;
+    if (body.date !== undefined) updateData.date = body.date;
+    if (body.coverImage !== undefined) updateData.coverImage = body.coverImage;
+    if (body.resources !== undefined) updateData.resources = body.resources;
+    return this.service.update(id, updateData);
   }
 
   @Delete(':id')

@@ -1,3 +1,7 @@
+import { ConferencesService } from './conferences.service';
+import { CloudinaryService } from '../common/services/cloudinary.service';
+import { Controller, Post, Get, Put, Delete, Body, Param, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('conferences')
 export class ConferencesController {
   constructor(

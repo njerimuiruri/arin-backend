@@ -1,93 +1,78 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
-import * as fs from 'fs';
 import { JournalArticleService } from './journal-article.service';
-
-function ensureUploadDir(): string {
-  const uploadDir = path.join(__dirname, '../../uploads/journal-articles');
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-  return uploadDir;
-}
+import { CloudinaryService } from '../common/services/cloudinary.service';
 
 @Controller('journal-articles')
 export class JournalArticleController {
-  constructor(private readonly service: JournalArticleService) {}
+  constructor(
+    private readonly service: JournalArticleService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, ensureUploadDir());
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-      },
-    }),
-    fileFilter: (req, file, cb) => {
-      if (!file.mimetype.startsWith('image/')) {
-        return cb(new Error('Only image files are allowed!'), false);
-      }
-      cb(null, true);
-    },
-    limits: { fileSize: 5 * 1024 * 1024 },
-  }))
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+  // Endpoint for uploading images to be embedded in description
+  @Post('upload-description-image')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadDescriptionImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      return { error: 'No file uploaded' };
+      throw new BadRequestException('No file uploaded');
     }
-    const url = `/uploads/journal-articles/${file.filename}`;
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed!');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('Image size must be less than 5MB');
+    }
+    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
+    return { url };
+  }
+
+  // Upload cover image
+  @Post('upload-cover-image')
+  @UseInterceptors(FileInterceptor('coverImage'))
+  async uploadCoverImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed!');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('Image size must be less than 5MB');
+    }
+    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
     return { url };
   }
 
   @Post('upload-resource')
-  @UseInterceptors(FileInterceptor('resource', {
-    storage: diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, ensureUploadDir());
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, 'resource-' + uniqueSuffix + ext);
-      },
-    }),
-    fileFilter: (req, file, cb) => {
-      if (file.mimetype !== 'application/pdf') {
-        return cb(new Error('Only PDF files are allowed!'), false);
-      }
-      cb(null, true);
-    },
-    limits: { fileSize: 10 * 1024 * 1024 },
-  }))
+  @UseInterceptors(FileInterceptor('resource'))
   async uploadResource(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      return { error: 'No file uploaded' };
+      throw new BadRequestException('No file uploaded');
     }
-    const url = `/uploads/journal-articles/${file.filename}`;
+    if (file.mimetype !== 'application/pdf') {
+      throw new BadRequestException('Only PDF files are allowed!');
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      throw new BadRequestException('PDF size must be less than 20MB');
+    }
+    const url = await this.cloudinaryService.uploadPdf(file.buffer, file.originalname);
     return { url };
   }
 
   @Post()
   async create(@Body() body: any) {
-    if (!body.title || !body.description || !body.authors || body.authors.length === 0) {
-      throw new BadRequestException('Missing required fields: title, description, or authors');
+    if (!body.title || !body.authors || !Array.isArray(body.authors) || body.authors.length === 0 || !body.date || !body.description) {
+      throw new BadRequestException('Missing required fields: title, authors, date, or description');
     }
-
-    if (!Array.isArray(body.availableResources)) {
-      body.availableResources = [];
-    }
-
-    if (!body.year && body.datePosted) {
-      body.year = new Date(body.datePosted).getFullYear();
-    }
-
-    return this.service.create(body);
+    return this.service.create({
+      title: body.title,
+      authors: body.authors,
+      description: body.description,
+      date: body.date,
+      coverImage: body.coverImage,
+      resources: body.resources,
+    });
   }
 
   @Get()
@@ -106,15 +91,14 @@ export class JournalArticleController {
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() body: any) {
-    if (!Array.isArray(body.availableResources)) {
-      body.availableResources = [];
-    }
-
-    if (!body.year && body.datePosted) {
-      body.year = new Date(body.datePosted).getFullYear();
-    }
-
-    const updated = await this.service.update(id, body);
+    const updateData: any = {};
+    if (body.title !== undefined) updateData.title = body.title;
+    if (body.author !== undefined) updateData.author = body.author;
+    if (body.description !== undefined) updateData.description = body.description;
+    if (body.date !== undefined) updateData.date = body.date;
+    if (body.coverImage !== undefined) updateData.coverImage = body.coverImage;
+    if (body.resources !== undefined) updateData.resources = body.resources;
+    const updated = await this.service.update(id, updateData);
     if (!updated) {
       throw new BadRequestException('Journal article not found');
     }

@@ -11,6 +11,6 @@ import { BooksController } from './books.controller';
     ]),
   ],
   controllers: [BooksController],
-  providers: [BooksService],
+  providers: [BooksService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class BooksModule {}

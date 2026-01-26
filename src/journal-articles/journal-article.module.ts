@@ -11,6 +11,6 @@ import { JournalArticleController } from './journal-article.controller';
     ]),
   ],
   controllers: [JournalArticleController],
-  providers: [JournalArticleService],
+  providers: [JournalArticleService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class JournalArticleModule {}

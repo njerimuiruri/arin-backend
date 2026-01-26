@@ -1,3 +1,7 @@
+import { AnnualReportsService } from './annual-reports.service';
+import { CloudinaryService } from '../common/services/cloudinary.service';
+import { Controller, Post, Get, Put, Delete, Body, Param, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('annual-reports')
 export class AnnualReportsController {
   constructor(

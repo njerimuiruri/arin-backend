@@ -6,7 +6,7 @@ import { CallForBooksController } from './call-for-books.controller';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: CallForBooks.name, schema: CallForBooksSchema }])],
-  providers: [CallForBooksService],
+  providers: [CallForBooksService, require('../common/services/cloudinary.service').CloudinaryService],
   controllers: [CallForBooksController],
   exports: [CallForBooksService],
 })

@@ -11,6 +11,6 @@ import { NewsBriefController } from './news-brief.controller';
     ]),
   ],
   controllers: [NewsBriefController],
-  providers: [NewsBriefService],
+  providers: [NewsBriefService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class NewsBriefModule {}

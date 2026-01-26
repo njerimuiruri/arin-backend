@@ -11,6 +11,6 @@ import { NewslettersController } from './newsletters.controller';
     ]),
   ],
   controllers: [NewslettersController],
-  providers: [NewslettersService],
+  providers: [NewslettersService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class NewslettersModule {}

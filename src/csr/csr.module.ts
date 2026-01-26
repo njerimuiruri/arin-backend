@@ -11,6 +11,6 @@ import { CsrController } from './csr.controller';
     ]),
   ],
   controllers: [CsrController],
-  providers: [CsrService],
+  providers: [CsrService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class CsrModule {}
