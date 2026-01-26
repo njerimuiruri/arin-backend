@@ -7,6 +7,6 @@ import { Cop, CopSchema } from './cop.schema';
 @Module({
   imports: [MongooseModule.forFeature([{ name: Cop.name, schema: CopSchema }])],
   controllers: [CopController],
-  providers: [CopService],
+  providers: [CopService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class CopModule {}

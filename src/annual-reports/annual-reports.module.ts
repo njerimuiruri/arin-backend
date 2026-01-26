@@ -11,6 +11,6 @@ import { AnnualReportsController } from './annual-reports.controller';
     ]),
   ],
   controllers: [AnnualReportsController],
-  providers: [AnnualReportsService],
+  providers: [AnnualReportsService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class AnnualReportsModule {}

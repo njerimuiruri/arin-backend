@@ -11,6 +11,6 @@ import { ConferencesController } from './conferences.controller';
     ]),
   ],
   controllers: [ConferencesController],
-  providers: [ConferencesService],
+  providers: [ConferencesService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class ConferencesModule {}

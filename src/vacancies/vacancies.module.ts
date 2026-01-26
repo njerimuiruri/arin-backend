@@ -7,6 +7,6 @@ import { Vacancy, VacancySchema } from './vacancies.schema';
 @Module({
   imports: [MongooseModule.forFeature([{ name: Vacancy.name, schema: VacancySchema }])],
   controllers: [VacanciesController],
-  providers: [VacanciesService],
+  providers: [VacanciesService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class VacanciesModule {}

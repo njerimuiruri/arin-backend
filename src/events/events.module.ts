@@ -11,6 +11,6 @@ import { EventsController } from './events.controllers';
     ]),
   ],
   controllers: [EventsController],
-  providers: [EventService],
+  providers: [EventService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class EventsModule {}
