@@ -1,68 +1,45 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
 import { ResearchProjectsService } from './research-projects.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CloudinaryService } from '../common/services/cloudinary.service';
 
 @Controller('research-projects')
 export class ResearchProjectsController {
-  constructor(private readonly service: ResearchProjectsService) {}
+  constructor(
+    private readonly service: ResearchProjectsService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../uploads/research-projects'));
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-      },
-    }),
-    fileFilter: (req, file, cb) => {
-      if (!file.mimetype.startsWith('image/')) {
-        return cb(new Error('Only image files are allowed!'), false);
-      }
-      cb(null, true);
-    },
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  }))
+  @UseInterceptors(FileInterceptor('file'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return { error: 'No file uploaded' };
     }
-    const url = `/uploads/research-projects/${file.filename}`;
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed!');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('Image size must be less than 5MB');
+    }
+    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
     return { url };
   }
 
   // Endpoint for uploading images to be embedded in description
   @Post('upload-description-image')
-  @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../uploads/research-projects'));
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, 'desc-' + uniqueSuffix + ext);
-      },
-    }),
-    fileFilter: (req, file, cb) => {
-      if (!file.mimetype.startsWith('image/')) {
-        return cb(new Error('Only image files are allowed!'), false);
-      }
-      cb(null, true);
-    },
-    limits: { fileSize: 5 * 1024 * 1024 },
-  }))
+  @UseInterceptors(FileInterceptor('image'))
   async uploadDescriptionImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
-    const url = `/uploads/research-projects/${file.filename}`;
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed!');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('Image size must be less than 5MB');
+    }
+    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
     return { url };
   }
 

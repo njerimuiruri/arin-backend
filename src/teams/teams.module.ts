@@ -11,6 +11,6 @@ import { TeamsController } from './teams.controller';
     ]),
   ],
   controllers: [TeamsController],
-  providers: [TeamsService],
+  providers: [TeamsService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class TeamsModule {}

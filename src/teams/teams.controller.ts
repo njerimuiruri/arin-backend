@@ -1,40 +1,30 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
 import { TeamsService } from './teams.service';
+import { CloudinaryService } from '../common/services/cloudinary.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('teams')
 export class TeamsController {
-  constructor(private readonly service: TeamsService) {}
+  constructor(
+    private readonly service: TeamsService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post('upload')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('image', {
-    storage: diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../uploads/teams'));
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, 'image-' + uniqueSuffix + ext);
-      },
-    }),
-    fileFilter: (req, file, cb) => {
-      if (!file.mimetype.startsWith('image/')) {
-        return cb(new Error('Only image files are allowed!'), false);
-      }
-      cb(null, true);
-    },
-    limits: { fileSize: 5 * 1024 * 1024 },
-  }))
+  @UseInterceptors(FileInterceptor('image'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return { error: 'No file uploaded' };
     }
-    const url = `/uploads/teams/${file.filename}`;
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed!');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('Image size must be less than 5MB');
+    }
+    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
     return { url };
   }
 

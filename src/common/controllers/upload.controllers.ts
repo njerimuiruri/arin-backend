@@ -33,7 +33,7 @@ export class UploadController {
       );
       return { success: true, url: imageUrl };
     } catch (error) {
-      throw new BadRequestException(Upload failed: ${error.message});
+      throw new BadRequestException(`Upload failed: ${error.message}`);
     }
   }
 
@@ -61,7 +61,7 @@ export class UploadController {
       );
       return { success: true, url: videoUrl };
     } catch (error) {
-      throw new BadRequestException(Upload failed: ${error.message});
+      throw new BadRequestException(`Upload failed: ${error.message}`);
     }
   }
 }

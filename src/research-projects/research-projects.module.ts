@@ -11,6 +11,6 @@ import { ResearchProjectsController } from './research-projects.controller';
     ]),
   ],
   controllers: [ResearchProjectsController],
-  providers: [ResearchProjectsService],
+  providers: [ResearchProjectsService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class ResearchProjectsModule {}

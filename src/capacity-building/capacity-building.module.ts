@@ -11,6 +11,6 @@ import { CapacityBuildingController } from './capacity-building.controller';
     ]),
   ],
   controllers: [CapacityBuildingController],
-  providers: [CapacityBuildingService],
+  providers: [CapacityBuildingService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class CapacityBuildingModule {}

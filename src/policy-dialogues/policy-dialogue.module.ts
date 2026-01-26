@@ -11,6 +11,6 @@ import { PolicyDialoguesController } from './policy-dialogues.controller';
     ]),
   ],
   controllers: [PolicyDialoguesController],
-  providers: [PolicyDialoguesService],
+  providers: [PolicyDialoguesService, require('../common/services/cloudinary.service').CloudinaryService],
 })
 export class PolicyDialoguesModule {}
