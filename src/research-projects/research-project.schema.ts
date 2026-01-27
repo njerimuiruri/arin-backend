@@ -23,6 +23,8 @@ export class ResearchProject extends Document {
 
   @Prop({ required: false, type: [String] })
   resources?: string[]; // URLs to uploaded PDFs
+  @Prop({ required: false, type: [String] })
+  teamMembers?: string[]; // Array of user IDs or names
 }
 
 export const ResearchProjectSchema = SchemaFactory.createForClass(ResearchProject);

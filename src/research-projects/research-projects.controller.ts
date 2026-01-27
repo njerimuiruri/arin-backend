@@ -73,6 +73,7 @@ export class ResearchProjectsController {
       date: body.date,
       coverImage: body.coverImage,
       resources: body.resources,
+      teamMembers: body.teamMembers,
     });
   }
 
@@ -95,6 +96,7 @@ export class ResearchProjectsController {
     if (body.date !== undefined) updateData.date = body.date;
     if (body.coverImage !== undefined) updateData.coverImage = body.coverImage;
     if (body.resources !== undefined) updateData.resources = body.resources;
+    if (body.teamMembers !== undefined) updateData.teamMembers = body.teamMembers;
     return this.service.update(id, updateData);
   }
 
