@@ -6,6 +6,9 @@ export class TechnicalReports extends Document {
   @Prop({ required: true })
   title: string;
 
+  @Prop({ type: [String], required: false })
+  authors?: string[];
+
   @Prop({ required: true })
   description: string;
 
