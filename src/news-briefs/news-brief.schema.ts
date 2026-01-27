@@ -9,8 +9,8 @@ export class NewsBrief extends Document {
   @Prop({ required: true })
   description: string; // HTML from WYSIWYG
 
-  @Prop({ required: false })
-  author?: string;
+  @Prop({ type: [String], required: false })
+  authors?: string[];
 
   @Prop({ required: false })
   coverImage?: string; // Main/cover image
