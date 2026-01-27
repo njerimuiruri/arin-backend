@@ -6,8 +6,12 @@ export class Newsletters extends Document {
   @Prop({ required: true })
   title: string;
 
+
   @Prop({ required: true })
   description: string;
+
+  @Prop({ type: [String], required: false })
+  authors?: string[];
 
   @Prop({ required: false })
   image?: string;
