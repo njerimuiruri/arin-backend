@@ -7,10 +7,16 @@ export class NewsBrief extends Document {
   title: string;
 
   @Prop({ required: true })
-  description: string;
+  description: string; // HTML from WYSIWYG
 
   @Prop({ required: false })
-  image?: string;
+  author?: string;
+
+  @Prop({ required: false })
+  coverImage?: string; // Main/cover image
+
+  @Prop({ required: false })
+  image?: string; // For backward compatibility or WYSIWYG images
 
   @Prop({ required: false })
   datePosted?: Date;

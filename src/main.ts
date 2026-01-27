@@ -25,6 +25,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'uploads'), {
     prefix: '/uploads/',
   });
+  app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 5001);
 }
 bootstrap();

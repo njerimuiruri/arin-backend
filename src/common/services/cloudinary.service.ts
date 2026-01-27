@@ -1,4 +1,5 @@
 
+
 import { Injectable } from '@nestjs/common';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -12,18 +13,43 @@ export class CloudinaryService {
     });
   }
 
+
+  sanitizePublicId(fileName: string): string {
+    return fileName
+      .replace(/\.[^/.]+$/, '') // remove extension
+      .replace(/[^a-zA-Z0-9-_]/g, '_'); // replace invalid chars with _
+  }
+
   async uploadPdf(fileBuffer: Buffer, fileName: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'arin/resources/pdfs',
           resource_type: 'raw',
-          public_id: fileName.replace(/\.[^/.]+$/, ''),
+          public_id: this.sanitizePublicId(fileName),
         },
         (error, result) => {
           if (error) reject(error);
           else if (result) resolve(result.secure_url);
           else reject(new Error('PDF upload failed'));
+        },
+      );
+      uploadStream.end(fileBuffer);
+    });
+  }
+
+  async uploadRaw(fileBuffer: Buffer, fileName: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'arin/resources/files',
+          resource_type: 'raw',
+          public_id: this.sanitizePublicId(fileName),
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else if (result) resolve(result.secure_url);
+          else reject(new Error('File upload failed'));
         },
       );
       uploadStream.end(fileBuffer);
@@ -36,7 +62,7 @@ export class CloudinaryService {
         {
           folder: 'arin/resources',
           resource_type: 'auto',
-          public_id: fileName.replace(/\.[^/.]+$/, ''),
+          public_id: this.sanitizePublicId(fileName),
         },
         (error, result) => {
           if (error) reject(error);

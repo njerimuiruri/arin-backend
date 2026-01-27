@@ -50,13 +50,20 @@ export class JournalArticleController {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
-    if (file.mimetype !== 'application/pdf') {
-      throw new BadRequestException('Only PDF files are allowed!');
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    ];
+    if (!allowedTypes.includes(file.mimetype)) {
+      throw new BadRequestException('Only PDF, DOC, DOCX, PPT, and PPTX files are allowed!');
     }
     if (file.size > 20 * 1024 * 1024) {
-      throw new BadRequestException('PDF size must be less than 20MB');
+      throw new BadRequestException('File size must be less than 20MB');
     }
-    const url = await this.cloudinaryService.uploadPdf(file.buffer, file.originalname);
+    const url = await this.cloudinaryService.uploadRaw(file.buffer, file.originalname);
     return { url };
   }
 

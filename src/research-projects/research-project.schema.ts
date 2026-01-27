@@ -18,6 +18,9 @@ export class ResearchProject extends Document {
   @Prop({ required: false })
   coverImage?: string; // URL to cover image
 
+  @Prop({ required: false })
+  category?: string;
+
   @Prop({ required: false, type: [String] })
   resources?: string[]; // URLs to uploaded PDFs
 }
