@@ -28,7 +28,11 @@ import { VacanciesModule } from './vacancies/vacancies.module';
 import { NewslettersModule } from './newsletters/newsletters.module';
 import { PressModule } from './press/press.module';
 import { CallForBooksModule } from './call-for-books/call-for-books.module';
+
 import { WorkingPaperSeriesModule } from './working-paper-series/working-paper-series.module';
+
+import { ImpactStoriesModule } from './impact-stories/impact-stories.module';
+import { PhotosVideosModule } from './photos-videos/photos-videos.module';
 
 
 @Module({
@@ -65,6 +69,9 @@ import { WorkingPaperSeriesModule } from './working-paper-series/working-paper-s
     PressModule,
     CallForBooksModule,
     WorkingPaperSeriesModule,
+
+    ImpactStoriesModule,
+    PhotosVideosModule,
 
   ],
   controllers: [AppController],

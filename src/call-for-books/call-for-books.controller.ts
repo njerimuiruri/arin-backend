@@ -1,3 +1,4 @@
+
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CallForBooksService } from './call-for-books.service';
@@ -9,6 +10,22 @@ export class CallForBooksController {
     private readonly service: CallForBooksService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
+
+  @Post('upload-description-image')
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadDescriptionImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      return { error: 'No file uploaded' };
+    }
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed!');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('Image size must be less than 5MB');
+    }
+    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
+    return { url };
+  }
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
