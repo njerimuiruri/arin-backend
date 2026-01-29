@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, BadRequestException, NotFoundException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
@@ -103,7 +103,7 @@ export class WorkingPaperSeriesController {
   async findOne(@Param('id') id: string) {
     const item = await this.service.findOne(id);
     if (!item) {
-      throw new BadRequestException('Working Paper Series item not found');
+      throw new NotFoundException('Working Paper Series item not found');
     }
     return item;
   }
