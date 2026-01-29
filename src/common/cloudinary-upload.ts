@@ -13,6 +13,7 @@ export async function uploadToCloudinary(file: Express.Multer.File): Promise<str
       { resource_type: 'auto' },
       (error, result) => {
         if (error) return reject(error);
+        if (!result) return reject(new Error('No result from Cloudinary'));
         resolve(result.secure_url);
       },
     );

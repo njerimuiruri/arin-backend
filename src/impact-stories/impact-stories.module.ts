@@ -5,6 +5,8 @@ import { ImpactStoriesService } from './impact-stories.service';
 
 import { CloudinaryService } from '../common/services/cloudinary.service';
 
+import { ImpactStoriesController } from './impact-stories.controller';
+
 @Module({
   imports: [
     MongooseModule.forFeature([

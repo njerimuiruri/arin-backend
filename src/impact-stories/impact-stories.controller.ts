@@ -24,10 +24,12 @@ function fileName(req, file, cb) {
 }
 
 @Controller('impact-stories')
+export class ImpactStoriesController {
   constructor(
     private readonly service: ImpactStoriesService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
+
   // Endpoint for uploading images to be embedded in description (WYSIWYG)
   @Post('upload-description-image')
   @UseInterceptors(FileInterceptor('image'))
