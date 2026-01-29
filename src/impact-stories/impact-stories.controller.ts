@@ -74,6 +74,10 @@ export class ImpactStoriesController {
 
   @Get(':id')
   async findById(@Param('id') id: string) {
+    // Validate id is a valid 24-character hex string
+    if (!id || typeof id !== 'string' || !/^[a-fA-F0-9]{24}$/.test(id)) {
+      throw new BadRequestException('Invalid or missing ImpactStory id');
+    }
     return this.service.findById(id);
   }
 
