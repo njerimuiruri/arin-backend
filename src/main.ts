@@ -18,6 +18,9 @@ async function bootstrap() {
       'http://127.0.0.1:3001',
       'http://127.0.0.1:3002',
       'http://127.0.0.1:3003',
+      'https://demo.arin-africa.org', // Production website
+      'https://dashboard.demo.arin-africa.org', // Production dashboard
+      'https://api.demo.arin-africa.org', // Production API
     ],
     credentials: true,
   });
