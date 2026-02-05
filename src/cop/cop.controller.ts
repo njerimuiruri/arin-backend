@@ -37,7 +37,7 @@ export class CopController {
     if (file.size > 10 * 1024 * 1024) {
       throw new BadRequestException('PDF size must be less than 10MB');
     }
-    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
+    const url = await this.cloudinaryService.uploadPdf(file.buffer, file.originalname);
     return { url };
   }
 

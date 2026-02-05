@@ -6,9 +6,11 @@ export class Blogs extends Document {
   @Prop({ required: true })
   title: string;
 
-
   @Prop({ required: true })
-  description: string;
+  description: string; // WYSIWYG HTML
+
+  @Prop({ type: [String], required: false })
+  authors?: string[];
 
   @Prop({ required: false })
   image?: string;
@@ -19,8 +21,11 @@ export class Blogs extends Document {
   @Prop({ required: true })
   date: Date;
 
-  @Prop({ required: true, type: [String] })
-  projectTeam: string[];
+  @Prop({ type: [String], required: false })
+  availableResources?: string[];
+
+  @Prop({ required: false, type: [String] })
+  projectTeam?: string[];
 }
 
 export const BlogsSchema = SchemaFactory.createForClass(Blogs);
