@@ -22,11 +22,14 @@ export class CloudinaryService {
 
   async uploadPdf(fileBuffer: Buffer, fileName: string): Promise<string> {
     return new Promise((resolve, reject) => {
+      // Keep .pdf extension so Cloudinary serves Content-Type: application/pdf,
+      // which allows the browser to open the file inline instead of downloading it.
+      const publicId = this.sanitizePublicId(fileName) + '.pdf';
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'arin/resources/pdfs',
           resource_type: 'raw',
-          public_id: this.sanitizePublicId(fileName),
+          public_id: publicId,
         },
         (error, result) => {
           if (error) reject(error);
@@ -40,11 +43,14 @@ export class CloudinaryService {
 
   async uploadRaw(fileBuffer: Buffer, fileName: string): Promise<string> {
     return new Promise((resolve, reject) => {
+      // Preserve the original extension so Cloudinary can serve the correct Content-Type.
+      const ext = fileName.includes('.') ? fileName.slice(fileName.lastIndexOf('.')) : '';
+      const publicId = this.sanitizePublicId(fileName) + ext;
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'arin/resources/files',
           resource_type: 'raw',
-          public_id: this.sanitizePublicId(fileName),
+          public_id: publicId,
         },
         (error, result) => {
           if (error) reject(error);
