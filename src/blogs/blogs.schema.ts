@@ -7,7 +7,7 @@ export class Blogs extends Document {
   title: string;
 
   @Prop({ required: true })
-  description: string; // WYSIWYG HTML
+  description: string; 
 
   @Prop({ type: [String], required: false })
   authors?: string[];
