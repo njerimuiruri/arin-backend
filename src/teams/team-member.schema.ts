@@ -13,6 +13,9 @@ export class TeamMember extends Document {
   role: string;
 
   @Prop({ required: false })
+  category?: string;
+
+  @Prop({ required: false })
   bio?: string;
 
   @Prop({ required: false })

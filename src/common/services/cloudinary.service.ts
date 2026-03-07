@@ -108,4 +108,44 @@ export class CloudinaryService {
       console.error('Error deleting resource from Cloudinary:', error);
     }
   }
+
+  /**
+   * Generates a signed Cloudinary URL for a raw resource (PDF, DOCX, etc.).
+   * Extracts the public_id from the full Cloudinary URL and signs it with
+   * the API secret so the resource is accessible even when access is restricted.
+   */
+  generateSignedUrl(cloudinaryUrl: string): string {
+    try {
+      // Cloudinary raw URL structure:
+      // https://res.cloudinary.com/<cloud>/raw/upload/[<transformations>/][v<version>/]<public_id>
+      // We need to extract only the public_id (everything after the optional version segment).
+      const rawUploadMarker = '/raw/upload/';
+      const idx = cloudinaryUrl.indexOf(rawUploadMarker);
+      if (idx === -1) {
+        // Not a raw resource URL — return as-is
+        return cloudinaryUrl;
+      }
+
+      let segment = cloudinaryUrl.slice(idx + rawUploadMarker.length);
+
+      // Find the version segment (v followed by digits + slash) wherever it appears,
+      // then take everything after it as the public_id.
+      // This correctly skips any transformation segments (e.g. fl_attachment) that
+      // appear before the version.
+      const versionMatch = segment.match(/(?:^|\/)v\d+\//);
+      if (versionMatch && versionMatch.index !== undefined) {
+        const afterVersion = segment.indexOf(versionMatch[0]) + versionMatch[0].length;
+        segment = segment.slice(afterVersion);
+      }
+      // If no version is present, the segment is already the public_id.
+
+      return cloudinary.url(segment, {
+        resource_type: 'raw',
+        sign_url: true,
+        secure: true,
+      });
+    } catch {
+      return cloudinaryUrl;
+    }
+  }
 }

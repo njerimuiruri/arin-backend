@@ -33,6 +33,7 @@ import { WorkingPaperSeriesModule } from './working-paper-series/working-paper-s
 
 import { ImpactStoriesModule } from './impact-stories/impact-stories.module';
 import { PhotosVideosModule } from './photos-videos/photos-videos.module';
+import { ResourcesModule } from './resources/resources.module';
 
 
 @Module({
@@ -72,6 +73,7 @@ import { PhotosVideosModule } from './photos-videos/photos-videos.module';
 
     ImpactStoriesModule,
     PhotosVideosModule,
+    ResourcesModule,
 
   ],
   controllers: [AppController],
