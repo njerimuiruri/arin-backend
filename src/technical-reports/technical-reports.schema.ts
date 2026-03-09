@@ -23,6 +23,9 @@ export class TechnicalReports extends Document {
 
   @Prop({ required: false })
   year?: number;
+
+  @Prop({ required: false })
+  category?: string;
 }
 
 export const TechnicalReportsSchema = SchemaFactory.createForClass(TechnicalReports);
