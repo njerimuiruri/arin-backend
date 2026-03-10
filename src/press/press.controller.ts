@@ -63,7 +63,7 @@ export class PressController {
       }
       cb(null, true);
     },
-    limits: { fileSize: 10 * 1024 * 1024 },
+    limits: { fileSize: 50 * 1024 * 1024 },
   }))
   async uploadResource(@UploadedFile() file: Express.Multer.File) {
     if (!file) {

@@ -60,8 +60,8 @@ export class JournalArticleController {
     if (!allowedTypes.includes(file.mimetype)) {
       throw new BadRequestException('Only PDF, DOC, DOCX, PPT, and PPTX files are allowed!');
     }
-    if (file.size > 20 * 1024 * 1024) {
-      throw new BadRequestException('File size must be less than 20MB');
+    if (file.size > 50 * 1024 * 1024) {
+      throw new BadRequestException('File size must be less than 50MB');
     }
     const url = await this.cloudinaryService.uploadRaw(file.buffer, file.originalname);
     return { url };

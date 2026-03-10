@@ -36,8 +36,8 @@ export class PolicyDialoguesController {
     if (file.mimetype !== 'application/pdf') {
       throw new BadRequestException('Only PDF files are allowed!');
     }
-    if (file.size > 10 * 1024 * 1024) {
-      throw new BadRequestException('PDF size must be less than 10MB');
+    if (file.size > 50 * 1024 * 1024) {
+      throw new BadRequestException('PDF size must be less than 50MB');
     }
     // Upload PDF to Cloudinary as raw file
     const url = await this.cloudinaryService.uploadPdf(file.buffer, file.originalname);
