@@ -11,7 +11,9 @@ export class PolicyBriefController {
   ) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB for images
+  }))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return { error: 'No file uploaded' };
@@ -27,7 +29,9 @@ export class PolicyBriefController {
   }
 
   @Post('upload-resource')
-  @UseInterceptors(FileInterceptor('resource'))
+  @UseInterceptors(FileInterceptor('resource', {
+    limits: { fileSize: 20 * 1024 * 1024 }, // 20MB — increase here to allow larger PDFs
+  }))
   async uploadResource(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return { error: 'No file uploaded' };
@@ -35,8 +39,8 @@ export class PolicyBriefController {
     if (file.mimetype !== 'application/pdf') {
       throw new BadRequestException('Only PDF files are allowed!');
     }
-    if (file.size > 50 * 1024 * 1024) {
-      throw new BadRequestException('PDF size must be less than 50MB');
+    if (file.size > 20 * 1024 * 1024) {
+      throw new BadRequestException('PDF size must be less than 20MB');
     }
     const url = await this.cloudinaryService.uploadPdf(file.buffer, file.originalname);
     return { url };
@@ -47,15 +51,12 @@ export class PolicyBriefController {
     if (!body.title || !body.description) {
       throw new BadRequestException('Missing required fields: title or description');
     }
-
     if (!Array.isArray(body.availableResources)) {
       body.availableResources = [];
     }
-
     if (!body.year && body.datePosted) {
       body.year = new Date(body.datePosted).getFullYear();
     }
-
     return this.service.create(body);
   }
 
@@ -78,11 +79,9 @@ export class PolicyBriefController {
     if (!Array.isArray(body.availableResources)) {
       body.availableResources = [];
     }
-
     if (!body.year && body.datePosted) {
       body.year = new Date(body.datePosted).getFullYear();
     }
-
     const updated = await this.service.update(id, body);
     if (!updated) {
       throw new BadRequestException('Policy brief not found');
