@@ -4,10 +4,26 @@ import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  
+  // Increase body size limits to handle large content uploads
+  app.use((req, res, next) => {
+    // Increase JSON and URL-encoded limits
+    req.on('data', (chunk) => {
+      // This allows us to set custom limits
+    });
+    next();
+  });
+
   app.use(cookieParser());
+  
+  // Configure Express to accept larger payloads
+  app.use(express.json({ limit: '100mb' }));
+  app.use(express.urlencoded({ limit: '100mb', extended: true }));
+  
   app.enableCors({
     origin: [
       'http://localhost:3000', // Next.js default
