@@ -25,6 +25,11 @@ export class AnnualReportsController {
     return { url };
   }
 
+  @Get('sign-upload')
+  signUpload() {
+    return this.cloudinaryService.signUpload('arin/resources/pdfs', 'raw');
+  }
+
   @Post('upload-resource')
   @UseInterceptors(FileInterceptor('resource'))
   async uploadResource(@UploadedFile() file: Express.Multer.File) {
