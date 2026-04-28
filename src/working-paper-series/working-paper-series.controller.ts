@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import { WorkingPaperSeriesService } from './working-paper-series.service';
 
 function ensureUploadDir(): string {
-  const uploadDir = path.join(__dirname, '../../uploads/working-paper-series');
+  const uploadDir = path.join(process.cwd(), 'uploads/working-paper-series');
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }

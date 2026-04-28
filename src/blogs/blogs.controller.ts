@@ -15,7 +15,7 @@ export class BlogsController {
   @UseInterceptors(FileInterceptor('resource', {
     storage: diskStorage({
       destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../uploads/blogs'));
+        cb(null, path.join(process.cwd(), 'uploads/blogs'));
       },
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -43,7 +43,7 @@ export class BlogsController {
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../../uploads/blogs'));
+        cb(null, path.join(process.cwd(), 'uploads/blogs'));
       },
       filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);

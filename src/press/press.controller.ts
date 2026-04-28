@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import { PressService } from './press.service';
 
 function ensureUploadDir(): string {
-  const uploadDir = path.join(__dirname, '../../uploads/press');
+  const uploadDir = path.join(process.cwd(), 'uploads/press');
   if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }
