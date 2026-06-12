@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TeamMember, TeamMemberSchema } from './team-member.schema';
 import { TeamsService } from './teams.service';
 import { TeamsController } from './teams.controller';
+import { CloudinaryService } from '../common/services/cloudinary.service';
 
 @Module({
   imports: [
@@ -11,6 +12,6 @@ import { TeamsController } from './teams.controller';
     ]),
   ],
   controllers: [TeamsController],
-  providers: [TeamsService, require('../common/services/cloudinary.service').CloudinaryService],
+  providers: [TeamsService, CloudinaryService],
 })
 export class TeamsModule {}

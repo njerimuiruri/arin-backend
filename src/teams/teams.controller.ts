@@ -1,8 +1,9 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, UseGuards } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { TeamsService } from './teams.service';
 import { CloudinaryService } from '../common/services/cloudinary.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { uploadToCloudinary } from '../common/cloudinary-upload';
 
 @Controller('teams')
 export class TeamsController {
@@ -16,7 +17,7 @@ export class TeamsController {
   @UseInterceptors(FileInterceptor('image'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException('No file received — make sure the form field is named "image"');
+      throw new BadRequestException('No file received — ensure the field name is "image"');
     }
     if (!file.mimetype.startsWith('image/')) {
       throw new BadRequestException('Only image files are allowed');
@@ -25,10 +26,16 @@ export class TeamsController {
       throw new BadRequestException('Image must be under 5 MB');
     }
     if (!file.buffer || file.buffer.length === 0) {
-      throw new BadRequestException('File buffer is empty — upload failed');
+      throw new BadRequestException('File buffer is empty');
     }
-    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
-    return { url };
+    try {
+      const url = await uploadToCloudinary(file);
+      return { url };
+    } catch (err: any) {
+      throw new InternalServerErrorException(
+        `Cloudinary upload failed: ${err?.message || err}`,
+      );
+    }
   }
 
   @Put('reorder')
