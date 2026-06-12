@@ -1,7 +1,6 @@
 import { Controller, Post, Body, Res, Get, Req, UseGuards } from '@nestjs/common';
 import type { Response, Request as ExpressRequest } from 'express';
 
-// Extend Express Request type to include user property
 interface AuthenticatedRequest extends ExpressRequest {
   user?: any;
 }
