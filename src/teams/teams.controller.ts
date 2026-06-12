@@ -16,13 +16,16 @@ export class TeamsController {
   @UseInterceptors(FileInterceptor('image'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      return { error: 'No file uploaded' };
+      throw new BadRequestException('No file received — make sure the form field is named "image"');
     }
     if (!file.mimetype.startsWith('image/')) {
-      throw new BadRequestException('Only image files are allowed!');
+      throw new BadRequestException('Only image files are allowed');
     }
     if (file.size > 5 * 1024 * 1024) {
-      throw new BadRequestException('Image size must be less than 5MB');
+      throw new BadRequestException('Image must be under 5 MB');
+    }
+    if (!file.buffer || file.buffer.length === 0) {
+      throw new BadRequestException('File buffer is empty — upload failed');
     }
     const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
     return { url };
