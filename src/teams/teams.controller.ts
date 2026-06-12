@@ -28,6 +28,15 @@ export class TeamsController {
     return { url };
   }
 
+  @Put('reorder')
+  @UseGuards(JwtAuthGuard)
+  async reorder(@Body() body: { ids: string[] }) {
+    if (!Array.isArray(body.ids)) {
+      throw new BadRequestException('ids must be an array');
+    }
+    return this.service.reorder(body.ids);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Body() body: any) {

@@ -14,7 +14,9 @@ export class TeamsService {
       if (!data.firstName || !data.lastName || !data.role) {
         throw new BadRequestException('Missing required fields: firstName, lastName, role');
       }
-      const created = new this.teamModel(data);
+      const maxOrderDoc = await this.teamModel.findOne().sort({ order: -1 }).exec();
+      const nextOrder = maxOrderDoc?.order != null ? maxOrderDoc.order + 1 : 0;
+      const created = new this.teamModel({ ...data, order: nextOrder });
       return await created.save();
     } catch (error) {
       if (error.name === 'ValidationError') {
@@ -25,7 +27,7 @@ export class TeamsService {
   }
 
   async findAll() {
-    return this.teamModel.find().exec();
+    return this.teamModel.find().sort({ order: 1 }).exec();
   }
 
   async findById(id: string) {
@@ -44,5 +46,13 @@ export class TeamsService {
     const deleted = await this.teamModel.findByIdAndDelete(id).exec();
     if (!deleted) throw new NotFoundException('Team member not found');
     return deleted;
+  }
+
+  async reorder(ids: string[]) {
+    const ops = ids.map((id, index) =>
+      this.teamModel.findByIdAndUpdate(id, { order: index }, { new: true }).exec(),
+    );
+    await Promise.all(ops);
+    return { success: true };
   }
 }

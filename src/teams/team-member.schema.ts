@@ -19,7 +19,10 @@ export class TeamMember extends Document {
   bio?: string;
 
   @Prop({ required: false })
-  image?: string; // URL to uploaded image
+  image?: string;
+
+  @Prop({ required: false, default: 0 })
+  order?: number;
 }
 
 export const TeamMemberSchema = SchemaFactory.createForClass(TeamMember);
