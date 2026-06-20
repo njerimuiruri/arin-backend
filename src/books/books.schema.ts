@@ -23,6 +23,15 @@ export class Books extends Document {
 
   @Prop({ required: false })
   year?: number;
+
+  @Prop({ required: false })
+  embargoDate?: Date;
+
+  @Prop({ required: false })
+  price?: number;
+
+  @Prop({ required: false, default: 'USD' })
+  currency?: string;
 }
 
 export const BooksSchema = SchemaFactory.createForClass(Books);
