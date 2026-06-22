@@ -30,7 +30,7 @@ export class PolicyBriefController {
 
   @Post('upload-resource')
   @UseInterceptors(FileInterceptor('resource', {
-    limits: { fileSize: 20 * 1024 * 1024 }, // 20MB — increase here to allow larger PDFs
+    limits: { fileSize: 50 * 1024 * 1024 }, // 20MB — increase here to allow larger PDFs
   }))
   async uploadResource(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
@@ -39,8 +39,8 @@ export class PolicyBriefController {
     if (file.mimetype !== 'application/pdf') {
       throw new BadRequestException('Only PDF files are allowed!');
     }
-    if (file.size > 20 * 1024 * 1024) {
-      throw new BadRequestException('PDF size must be less than 20MB');
+    if (file.size > 50 * 1024 * 1024) {
+      throw new BadRequestException('PDF size must be less than 50MB');
     }
     const url = await this.cloudinaryService.uploadPdf(file.buffer, file.originalname);
     return { url };
