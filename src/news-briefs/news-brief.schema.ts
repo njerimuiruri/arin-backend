@@ -26,6 +26,9 @@ export class NewsBrief extends Document {
 
   @Prop({ required: false })
   year?: number;
+
+  @Prop({ required: false })
+  category?: string;
 }
 
 export const NewsBriefSchema = SchemaFactory.createForClass(NewsBrief);

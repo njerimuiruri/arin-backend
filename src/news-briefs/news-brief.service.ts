@@ -19,7 +19,7 @@ export class NewsBriefService {
   }
 
   async findAll() {
-    return this.briefModel.find().exec();
+    return this.briefModel.find().sort({ datePosted: -1, createdAt: -1 }).exec();
   }
 
   async findOne(id: string) {
