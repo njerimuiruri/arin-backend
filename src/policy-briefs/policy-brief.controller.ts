@@ -30,7 +30,7 @@ export class PolicyBriefController {
 
   @Post('upload-resource')
   @UseInterceptors(FileInterceptor('resource', {
-    limits: { fileSize: 50 * 1024 * 1024 }, // 20MB — increase here to allow larger PDFs
+    limits: { fileSize: 50 * 1024 * 1024 }, // 20MB  increase here to allow larger PDFs
   }))
   async uploadResource(@UploadedFile() file: Express.Multer.File) {
     if (!file) {

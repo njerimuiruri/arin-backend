@@ -256,7 +256,7 @@ const fellowsBriefs = [
     category: 'Health',
     author: '',
     image: '/img/briefs/13.png',
-    shortDescription: "Advocates for transdisciplinary Communities of Practice to address Africa's diverse climate-driven health threats — from desertification in the north to flooding in the east — requiring targeted, integrated research and policy responses.",
+    shortDescription: "Advocates for transdisciplinary Communities of Practice to address Africa's diverse climate-driven health threats  from desertification in the north to flooding in the east  requiring targeted, integrated research and policy responses.",
     briefPreview: '',
     fullBriefLink: '',
   },
@@ -479,7 +479,7 @@ async function bootstrap() {
     created++;
   }
 
-  console.log(`\nDone — ${created} seeded, ${skipped} skipped.`);
+  console.log(`\nDone  ${created} seeded, ${skipped} skipped.`);
   await app.close();
 }
 

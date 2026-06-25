@@ -17,7 +17,7 @@ export class TeamsController {
   @UseInterceptors(FileInterceptor('image'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException('No file received — ensure the field name is "image"');
+      throw new BadRequestException('No file received  ensure the field name is "image"');
     }
     if (!file.mimetype.startsWith('image/')) {
       throw new BadRequestException('Only image files are allowed');

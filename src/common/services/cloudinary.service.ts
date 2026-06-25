@@ -143,7 +143,7 @@ export class CloudinaryService {
       const rawUploadMarker = '/raw/upload/';
       const idx = cloudinaryUrl.indexOf(rawUploadMarker);
       if (idx === -1) {
-        // Not a raw resource URL — return as-is
+        // Not a raw resource URL  return as-is
         return cloudinaryUrl;
       }
 
