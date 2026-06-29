@@ -32,6 +32,9 @@ export class Books extends Document {
 
   @Prop({ required: false, default: 'USD' })
   currency?: string;
+
+  @Prop({ required: false, default: true })
+  resourcesPublic?: boolean;
 }
 
 export const BooksSchema = SchemaFactory.createForClass(Books);
