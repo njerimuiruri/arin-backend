@@ -34,6 +34,7 @@ import { WorkingPaperSeriesModule } from './working-paper-series/working-paper-s
 import { ImpactStoriesModule } from './impact-stories/impact-stories.module';
 import { PhotosVideosModule } from './photos-videos/photos-videos.module';
 import { ResourcesModule } from './resources/resources.module';
+import { PurchasesModule } from './purchases/purchases.module';
 
 
 @Module({
@@ -74,6 +75,7 @@ import { ResourcesModule } from './resources/resources.module';
     ImpactStoriesModule,
     PhotosVideosModule,
     ResourcesModule,
+    PurchasesModule,
 
   ],
   controllers: [AppController],
