@@ -32,7 +32,7 @@ export class PurchasesService {
     currency: string;
     quantity: number;
   }) {
-    // Idempotent — don't double-process the same reference
+    // Idempotent  don't double-process the same reference
     const existing = await this.purchaseModel.findOne({ reference: data.reference });
     if (existing) return existing;
 
@@ -71,7 +71,7 @@ export class PurchasesService {
     });
     await purchase.save();
 
-    // Send email — non-blocking failure (log but don't throw)
+    // Send email  non-blocking failure (log but don't throw)
     let emailSent = false;
     try {
       await this.sendBookEmail(data.email, data.bookTitle, data.resources, data.reference);
