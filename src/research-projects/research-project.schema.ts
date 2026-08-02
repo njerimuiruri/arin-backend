@@ -27,6 +27,9 @@ export class ResourceItem {
 
   @Prop({ required: false })
   group?: string; // optional theme/sub-project label, e.g. "AI for Climate Resilience"
+
+  @Prop({ required: false })
+  image?: string; // optional cover image shown on the resource card and its detail page
 }
 export const ResourceItemSchema = SchemaFactory.createForClass(ResourceItem);
 
