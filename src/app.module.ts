@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ResearchProjectsModule } from './research-projects/research-projects.module';
+import { ThemesModule } from './themes/themes.module';
 import { CapacityBuildingModule } from './capacity-building/capacity-building.module';
 import { PolicyDialoguesModule } from './policy-dialogues/policy-dialogue.module';
 import { EventsModule } from './events/events.module';
@@ -51,6 +52,7 @@ import { PurchasesModule } from './purchases/purchases.module';
     UsersModule,
     AuthModule,
     ResearchProjectsModule,
+    ThemesModule,
     CapacityBuildingModule,
     PolicyDialoguesModule,
     EventsModule,
