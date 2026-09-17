@@ -14,6 +14,9 @@ export class WorkingPaperSeries {
   @Prop()
   image?: string;
 
+  @Prop({ default: 'General' })
+  category?: string;
+
   @Prop({ type: [String], default: [] })
   authors?: string[];
 
