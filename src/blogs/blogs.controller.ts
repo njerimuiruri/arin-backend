@@ -1,69 +1,47 @@
 
 import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
 import { BlogsService } from './blogs.service';
+import { CloudinaryService } from '../common/services/cloudinary.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 
 @Controller('blogs')
 export class BlogsController {
-  constructor(private readonly service: BlogsService) {}
+  constructor(
+    private readonly service: BlogsService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Post('upload-resource')
-  @UseInterceptors(FileInterceptor('resource', {
-    storage: diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, path.join(process.cwd(), 'uploads/blogs'));
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-      },
-    }),
-    fileFilter: (req, file, cb) => {
-      if (file.mimetype !== 'application/pdf') {
-        return cb(new Error('Only PDF files are allowed!'), false);
-      }
-      cb(null, true);
-    },
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
-  }))
+  @UseInterceptors(FileInterceptor('resource'))
   async uploadResource(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return { error: 'No file uploaded' };
     }
-    const url = `/uploads/blogs/${file.filename}`;
+    if (file.mimetype !== 'application/pdf') {
+      throw new BadRequestException('Only PDF files are allowed!');
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      throw new BadRequestException('PDF size must be less than 50MB');
+    }
+    const url = await this.cloudinaryService.uploadPdf(file.buffer, file.originalname);
     return { url };
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file', {
-    storage: diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, path.join(process.cwd(), 'uploads/blogs'));
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-      },
-    }),
-    fileFilter: (req, file, cb) => {
-      if (!file.mimetype.startsWith('image/')) {
-        return cb(new Error('Only image files are allowed!'), false);
-      }
-      cb(null, true);
-    },
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  }))
+  @UseInterceptors(FileInterceptor('file'))
   async uploadImage(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       return { error: 'No file uploaded' };
     }
-    const url = `/uploads/blogs/${file.filename}`;
+    if (!file.mimetype.startsWith('image/')) {
+      throw new BadRequestException('Only image files are allowed!');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('Image size must be less than 5MB');
+    }
+    const url = await this.cloudinaryService.uploadImage(file.buffer, file.originalname);
     return { url };
   }
 
