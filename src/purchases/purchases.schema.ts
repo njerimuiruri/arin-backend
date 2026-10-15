@@ -3,6 +3,9 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Purchase extends Document {
+  @Prop({ default: '' })
+  name: string;
+
   @Prop({ required: true })
   email: string;
 
@@ -32,6 +35,12 @@ export class Purchase extends Document {
 
   @Prop({ default: false })
   emailSent: boolean;
+
+  @Prop()
+  emailError?: string;
+
+  @Prop()
+  paidAt?: Date;
 }
 
 export const PurchaseSchema = SchemaFactory.createForClass(Purchase);

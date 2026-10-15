@@ -120,6 +120,8 @@ export class ResearchProjectsController {
       date: body.date,
       coverImage: body.coverImage,
       category: body.category,
+      status: body.status,
+      endYear: body.endYear,
       objectives: body.objectives,
       focusAreas: body.focusAreas,
       goal: body.goal,
@@ -156,6 +158,8 @@ export class ResearchProjectsController {
     if (body.date !== undefined) updateData.date = body.date;
     if (body.coverImage !== undefined) updateData.coverImage = body.coverImage;
     if (body.category !== undefined) updateData.category = body.category;
+    if (body.status !== undefined) updateData.status = body.status;
+    if (body.endYear !== undefined) updateData.endYear = body.endYear;
     if (body.objectives !== undefined) updateData.objectives = body.objectives;
     if (body.focusAreas !== undefined) updateData.focusAreas = body.focusAreas;
     if (body.goal !== undefined) updateData.goal = body.goal;

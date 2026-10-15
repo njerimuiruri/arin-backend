@@ -11,6 +11,8 @@ export const RESOURCE_TYPES = [
   'other',
 ] as const;
 
+export const PROJECT_STATUSES = ['ongoing', 'completed'] as const;
+
 @Schema({ _id: false })
 export class ResourceItem {
   @Prop({ required: true })
@@ -116,7 +118,13 @@ export class ResearchProject extends Document {
   coverImage?: string; // URL to cover image
 
   @Prop({ required: false })
-  category?: string;
+  category?: string; // one of ARIN's focus areas, drives grouping in the website menu
+
+  @Prop({ required: false, enum: PROJECT_STATUSES })
+  status?: string; // 'ongoing' | 'completed'
+
+  @Prop({ required: false })
+  endYear?: number; // start is `date`; omit while ongoing
 
   @Prop({ required: false, type: [String], default: [] })
   objectives?: string[];

@@ -10,7 +10,11 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   
   app.use(cookieParser());
-  app.use(express.json({ limit: '100mb' }));
+  // Keep the raw body so Paystack webhook signatures can be verified
+  app.use(express.json({
+    limit: '100mb',
+    verify: (req: any, _res, buf) => { req.rawBody = buf; },
+  }));
   app.use(express.urlencoded({ limit: '100mb', extended: true }));
   
   app.enableCors({
